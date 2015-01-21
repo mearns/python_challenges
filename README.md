@@ -224,15 +224,18 @@ For real flexibility, you should define your main function like this:
 ```python
 import sys
 
-# ...
-
 def main(args=None):
     if args is None:
         args = sys.argv
         
     ### run your top level script code, using `args` as the command line arguments.
 
+    ### Return exit code.
     return 0
+
+if __name__ == '__main__':
+    sys.exit(main())
+
 ```
 
 This allows importing code to pass you a custom sequence of "command line" arguments
@@ -243,6 +246,13 @@ arguments (which is a good idea if you have even slightly complex arguments), yo
 don't even need to use `sys.argv` as shown, bcause the `parse_args` function works
 the same way: if you pass in arguments it uses them, if you pass in `None` (or no
 arguments), it uses `sys.argv`.
+
+The return value from your `main` function should be the exit code that you would
+normally pass to `sys.exit` zero for success, non zero for any kind of failure or error.
+But since you're potentially being called from another
+module, you shouldn't call `sys.exit` directly, because they may not want to exit
+yet. Instead, you should just return your exit code to the calling function, and they
+can decide whether or not to exit.
 
 But as I mentioned, I'm not generally going to use a `main` function in the posted
 code, because it adds a significant amount of _visual_ complexity to the script,
